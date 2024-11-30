@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta 3 - Búsqueda de Autores</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #6200ea;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        main {
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 600px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        select, input, button {
+            font-size: 16px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        button {
+            background-color: #6200ea;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #4500b5;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .results h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .results ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .results li {
+            background: #f9f9f9;
+            margin-bottom: 5px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Consulta 3: Autores de género [male o female] con calificación promedio superior a [número] en libros del género [género de libro]</h1>
+    </header>
+
+    <main>
+        <form method="POST">
+            <!-- Selección de género del autor -->
+            <label for="genero_autor">Género del Autor:</label>
+            <select name="genero_autor" id="genero_autor" required>
+                <option value="" disabled selected>Seleccione...</option>
+                <option value="male">Masculino</option>
+                <option value="female">Femenino</option>
+            </select>
+
+            <!-- Selección del género del libro -->
+            <label for="genero_libro">Género del Libro:</label>
+            <select name="genero_libro" id="genero_libro" required>
+                <option value="" disabled selected>Seleccione...</option>
+                {% for genero in generos_libros %}
+                    <option value="{{ genero }}">{{ genero }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Input para la calificación mínima -->
+            <label for="calificacion_minima">Calificación Mínima:</label>
+            <input type="number" step="0.1" name="calificacion_minima" id="calificacion_minima" placeholder="Ej: 4.7" required>
+
+            <!-- Botón para enviar -->
+            <button type="submit">Buscar</button>
+        </form>
+
+        <!-- Mostrar errores si los hay -->
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <!-- Mostrar resultados si existen -->
+        <div class="results">
+            {% if resultados %}
+                <h2>Resultados:</h2>
+                <ul>
+                    {% for autor in resultados %}
+                        <li>{{ autor[0] }}</li>
+                    {% endfor %}
+                </ul>
+            {% elif resultados is not none %}
+                <p>No se encontraron resultados para los criterios seleccionados.</p>
+            {% endif %}
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2024 Consulta de Libros - Todos los derechos reservados.
+    </footer>
+</body>
+</html>

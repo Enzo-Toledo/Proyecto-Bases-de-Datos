@@ -1,0 +1,69 @@
+DROP TABLE IF EXISTS Valoracion CASCADE;
+DROP TABLE IF EXISTS Libro CASCADE;
+DROP TABLE IF EXISTS Autor CASCADE;
+
+-- Crear tabla Autor
+CREATE TABLE Autor (
+    Nombre VARCHAR(255) PRIMARY KEY,
+    NumeroTrabajos INT,
+    Genero VARCHAR(100),
+    Nacimiento DATE,
+    Muerte DATE,
+    PuntuacionPromedio FLOAT,
+    NumeroVotos INT,
+    Pais VARCHAR(100)
+);
+
+-- Crear tabla Libro
+CREATE TABLE Libro (
+    BookId VARCHAR(255) PRIMARY KEY,
+    Titulo VARCHAR(255),
+    Autor VARCHAR(255) REFERENCES Autor(Nombre),
+    Descripcion TEXT,
+    Idioma VARCHAR(50),
+    Generos TEXT[],
+    Personajes TEXT[],
+    Formato VARCHAR(100),
+    Paginas INT,
+    Editor VARCHAR(255),
+    FechaPublicacion DATE,
+	PrimeraFechaPublicacion DATE,
+    Premios TEXT,
+	Escenario TEXT[]
+);
+
+-- Crear tabla Valoracion
+CREATE TABLE Valoracion (
+    BookId VARCHAR(255) REFERENCES Libro(BookId),
+    Calificacion FLOAT,
+    NumeroCalificaciones INT,
+	CalificacionesPorEstrellas TEXT[],	
+    Aprobacion FLOAT,
+    PuntuacionBBE FLOAT,
+    BBEVotos INT,
+    PRIMARY KEY (BookId)
+);
+
+--------------------------------------------------------
+
+-- Cargar datos en la tabla Autor
+COPY Autor(Nombre, NumeroTrabajos, Genero, Nacimiento, Muerte, PuntuacionPromedio, NumeroVotos, Pais)
+FROM 'C:\\Users\\migue\\Desktop\\Autor.csv'
+DELIMITER ','
+CSV HEADER;
+
+------------
+-- Cargar datos en la tabla Libro
+COPY Libro(BookId, Titulo, Autor, Descripcion, Idioma, Generos, Personajes, Formato, Paginas, Editor, FechaPublicacion, PrimeraFechaPublicacion, Premios, Escenario)
+FROM 'C:\\Users\\migue\\Desktop\\Libro.csv'
+DELIMITER ','
+CSV HEADER;
+
+------------------
+-- Cargar datos en la tabla Valoracion
+COPY Valoracion(BookId, Calificacion, NumeroCalificaciones, CalificacionesPorEstrellas, Aprobacion, PuntuacionBBE, BBEVotos)
+FROM 'C:\\Users\\migue\\Desktop\\Valoracion.csv'
+DELIMITER ','
+CSV HEADER;
+
+--------------------------------------------------------

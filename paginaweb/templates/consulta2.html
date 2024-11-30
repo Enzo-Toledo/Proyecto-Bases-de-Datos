@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta 2: Libros </title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #6200ea;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        main {
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 700px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        select, input, button {
+            font-size: 16px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        button {
+            background-color: #6200ea;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #4500b5;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f9;
+            font-weight: bold;
+        }
+
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .pagination a {
+            margin: 0 5px;
+            padding: 8px 12px;
+            text-decoration: none;
+            color: white;
+            background-color: #6200ea;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .pagination a:hover {
+            background-color: #4500b5;
+        }
+
+        .pagination a.disabled {
+            background-color: gray;
+            pointer-events: none;
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Consulta 2: Libros de [autor] del género [género del libro] con calificación superior a [número]</h1>
+    </header>
+
+    <main>
+        <!-- Formulario de consulta -->
+        <form method="POST">
+            <label for="autor_escrito">Escribir Autor:</label>
+            <input type="text" id="autor_escrito" name="autor_escrito" placeholder="Ejemplo: George R.R. Martin" value="{{ autor_escrito }}">
+
+            <label for="autor_seleccionado">O Seleccionar Autor:</label>
+            <select id="autor_seleccionado" name="autor_seleccionado">
+                <option value="" disabled selected>-- Selecciona un autor --</option>
+                {% for autor in autores %}
+                    <option value="{{ autor }}" {% if autor == autor_seleccionado %} selected {% endif %}>{{ autor }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="genero_escrito">Escribir Género:</label>
+            <input type="text" id="genero_escrito" name="genero_escrito" placeholder="Ejemplo: Fantasy" value="{{ genero_escrito }}">
+
+            <label for="genero_seleccionado">O Seleccionar Género:</label>
+            <select id="genero_seleccionado" name="genero_seleccionado">
+                <option value="" disabled selected>-- Selecciona un género --</option>
+                {% for genero in generos %}
+                    <option value="{{ genero }}" {% if genero == genero_seleccionado %} selected {% endif %}>{{ genero }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="calificacion">Calificación Mínima:</label>
+            <input type="number" id="calificacion" name="calificacion" min="1" max="5" step="0.1" placeholder="Ejemplo: 4.5" value="{{ calificacion }}" required>
+
+            <button type="submit">Buscar</button>
+        </form>
+
+        <!-- Resultados -->
+        {% if resultado %}
+            <h2>Resultados:</h2>
+            <table>
+                <tr>
+                    <th>Título</th>
+                    <th>Calificación</th>
+                </tr>
+                {% for libro in resultado %}
+                    <tr>
+                        <td>{{ libro[0] }}</td>
+                        <td>{{ libro[1] }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% elif resultado is not none %}
+            <p>No se encontraron resultados para los criterios seleccionados.</p>
+        {% endif %}
+
+        <!-- Paginación -->
+        <div class="pagination">
+            <p>Página {{ pagina_autores }} de {{ total_paginas_autores }}</p>
+            <a href="{{ url_for('consulta2', pagina_autores=1) }}" class="{% if pagina_autores == 1 %} disabled {% endif %}">Primera</a>
+            <a href="{{ url_for('consulta2', pagina_autores=pagina_autores-1) }}" class="{% if pagina_autores == 1 %} disabled {% endif %}">Anterior</a>
+            <a href="{{ url_for('consulta2', pagina_autores=pagina_autores+1) }}" class="{% if pagina_autores == total_paginas_autores %} disabled {% endif %}">Siguiente</a>
+            <a href="{{ url_for('consulta2', pagina_autores=total_paginas_autores) }}" class="{% if pagina_autores == total_paginas_autores %} disabled {% endif %}">Última</a>
+        </div>
+
+        <!-- Ir a una página específica -->
+        <div class="pagination">
+            <form action="{{ url_for('consulta2') }}" method="GET" style="display:inline;">
+                <label for="pagina_autores">Ir a página:</label>
+                <input type="number" name="pagina_autores" min="1" max="{{ total_paginas_autores }}" value="{{ pagina_autores }}" style="width: 60px;">
+                <button type="submit" style="padding: 5px 10px; background-color: #6200ea; color: white; border: none; font-size: 16px;">Ir</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2024 Consulta de Libros - Todos los derechos reservados.
+    </footer>
+</body>
+</html>

@@ -1,0 +1,138 @@
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Título principal */
+h1 {
+    text-align: center;
+    font-size: 36px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Texto de la consulta */
+.consulta-texto {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.consulta-principal {
+    font-size: 24px;
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.premio-text {
+    color: #0066cc;
+    font-weight: bold;
+    font-size: 28px;
+    text-transform: capitalize;
+}
+
+/* Estilos para las columnas */
+.main-content {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.left-column, .right-column {
+    flex: 1;
+}
+
+/* Formulario y paginación */
+.form-control {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.submit-btn {
+    padding: 10px 20px;
+    background-color: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    background-color: #005bb5;
+}
+
+/* Paginación */
+.pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    color: #0066cc;
+    text-decoration: none;
+    padding: 5px 10px;
+    border: 1px solid #0066cc;
+    margin: 0 5px;
+    border-radius: 4px;
+}
+
+.pagination a:hover {
+    background-color: #0066cc;
+    color: white;
+}
+
+.pagination span {
+    font-size: 18px;
+    margin: 0 5px;
+}
+
+/* Estilo para el campo de ir a página */
+.go-to-page-form {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    justify-content: center;
+}
+
+.go-to-page-form label {
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+.go-to-page-form input {
+    width: 60px;
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.go-to-page-form button {
+    padding: 5px 10px;
+    background-color: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.go-to-page-form button:hover {
+    background-color: #005bb5;
+}

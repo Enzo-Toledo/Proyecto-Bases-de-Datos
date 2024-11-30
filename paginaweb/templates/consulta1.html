@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Premios</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        header h1 {
+            color: #6a1b9a; /* Morado */
+            font-size: 36px;
+            margin: 0;
+            background-color: #6a1b9a;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        header p {
+            color: #333;
+            font-size: 18px;
+        }
+
+        .consulta-texto h2 {
+            color: #6a1b9a;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        /* Formulario */
+        form {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        select,
+        input[type="number"] {
+            padding: 10px;
+            border: 2px solid #6a1b9a;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            width: 80%;
+            max-width: 400px;
+        }
+
+        button {
+            background-color: #6a1b9a; /* Morado */
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #9c27b0; /* Morado más suave */
+        }
+
+        /* Paginación */
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .pagination a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #6a1b9a;
+        }
+
+        .pagination a:hover {
+            text-decoration: underline;
+        }
+
+        .go-to-page-form {
+            margin-top: 10px;
+        }
+
+        .go-to-page-form label {
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        .go-to-page-form input {
+            width: 50px;
+            padding: 5px;
+            margin-right: 10px;
+        }
+
+        /* Caja vacía de la derecha */
+        .right-column {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        /* Estilos de resultado */
+        .right-column h2 {
+            color: #6a1b9a;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .right-column p {
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Consulta 1</h1>
+            <p>Selecciona un premio para obtener el país con más premios otorgados.</p>
+        </header>
+        
+        <!-- Texto principal con la consulta -->
+        <div class="consulta-texto">
+            <h2 class="consulta-principal">
+                País que ha ganado más veces el premio <span class="premio-text" id="premio-text">{{ request.form.get('premio') or 'Selecciona un premio' }}</span> y el número de veces que lo ha hecho.
+            </h2>
+        </div>
+
+        <!-- Formulario para seleccionar un premio -->
+        <form method="POST">
+            <label for="premio">Elige un Premio:</label>
+            <select name="premio" id="premio">
+                {% for premio in premios %}
+                    <option value="{{ premio }}" {% if premio == request.form.get('premio') %}selected{% endif %}>{{ premio }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Consultar</button>
+        </form>
+
+        <!-- Resultados al centro -->
+        <div class="right-column">
+            {% if resultado %}
+                <h2>Resultado</h2>
+                <p>El país con más premios para el premio "<strong>{{ request.form.get('premio') }}</strong>" es: <strong>{{ resultado[0] }}</strong></p>
+                <p>Con un total de <strong>{{ resultado[1] }}</strong> premios.</p>
+            {% endif %}
+        </div>
+
+        <!-- Paginación -->
+        <div class="pagination">
+            {% if pagina > 1 %}
+                <a href="{{ url_for('consulta1', pagina=pagina-1) }}">&laquo; Anterior</a>
+            {% endif %}
+            <span>Página {{ pagina }} de {{ total_paginas }}</span>
+            {% if pagina < total_paginas %}
+                <a href="{{ url_for('consulta1', pagina=pagina+1) }}">Siguiente &raquo;</a>
+            {% endif %}
+
+            <!-- Campo para ir a una página específica -->
+            <form method="get" class="go-to-page-form">
+                <label for="pagina_input">Ir a la página:</label>
+                <input type="number" id="pagina_input" name="pagina" min="1" max="{{ total_paginas }}" value="{{ pagina }}">
+                <button type="submit">Ir</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Limpiar el premio mostrado (eliminar corchetes y comillas si están presentes)
+        document.addEventListener('DOMContentLoaded', function () {
+            var premioText = document.getElementById('premio-text');
+            if (premioText) {
+                // Eliminar los corchetes y comillas de la cadena
+                var premio = premioText.textContent;
+                premio = premio.replace(/[{}\[\]']+/g, '');  // Eliminar corchetes y comillas
+                premioText.textContent = premio;  // Actualizar el contenido del span
+            }
+        });
+    </script>
+</body>
+</html>

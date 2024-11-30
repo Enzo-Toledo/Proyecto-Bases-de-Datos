@@ -1,0 +1,23 @@
+Ahora, necesito que debajo de esta consulta1 hagas otras 2 consultas analogo a lo hecho antes, el formato de la segunda consulta es el siguiente:
+SELECT Libro.titulo, Valoracion.calificacion
+FROM Libro
+JOIN Autor ON Libro.autor = Autor.nombre
+JOIN Valoracion ON Valoracion.bookid = Libro.bookid
+WHERE Autor.nombre = [NOMBRE DEL AUTOR]
+AND [GENERO DEL LIBRO] = ANY(Libro.generos)
+AND Valoracion.calificacion > [NUMERO ENTRE 1 Y 5];
+
+La tercera consulta a agregar ubicala debajo de la segunda anterior. Esta es la siguiente:
+SELECT DISTINCT Autor.nombre
+FROM Autor
+JOIN Libro ON Autor.nombre = Libro.autor
+JOIN Valoracion ON Valoracion.bookid = Libro.bookid
+WHERE Autor.genero = [GENERO DEL AUTOR, EN ESTE CASO LISTA QUE SEA 'male' o 'female' PARA ELEGIR]
+AND Valoracion.calificacion > [NUMERO ENTRE 1 Y 5]
+AND [GENERO DEL LIBRO] = ANY(Libro.generos);
+
+Para la completacion de [NOMBRE DEL AUTOR] y [GENERO DEL LIBRO] considera que son strings, y esta vez haz que el usuario pueda escribir
+el input y segun lo que vaya escribiendo de opciones para autocompletarlo. Por otro lado, tambien se necesita recibir un [NUMERO ENTRE 1 Y 5] que es un float.
+Asegurate de que todo esto sea anti inyecciones SQL.
+
+Y que solo sea una pagina (la inicial) que tenga las 3 consultas juntas.
