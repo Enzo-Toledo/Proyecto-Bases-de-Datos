@@ -1,0 +1,19 @@
+CREATE MATERIALIZED VIEW vista_premios_distintos AS
+SELECT DISTINCT regexp_replace(replace(replace(premios, '{'::text, ''::text), '}'::text, ''::text), '"([^"]*)"'::text, '\1'::text, 'g'::text) 
+AS premio
+FROM libro
+ORDER BY (regexp_replace(replace(replace(premios, '{'::text, ''::text), '}'::text, ''::text), '"([^"]*)"'::text, '\1'::text, 'g'::text));
+
+--------------------------------------------------------
+
+CREATE MATERIALIZED VIEW vista_autores AS
+SELECT DISTINCT nombre AS autor
+FROM autor
+ORDER BY nombre;
+
+--------------------------------------------------------
+
+CREATE MATERIALIZED VIEW vista_generos AS
+SELECT DISTINCT TRIM(BOTH '[]'::text FROM unnest(generos)) AS genero
+FROM libro
+ORDER BY (TRIM(BOTH '[]'::text FROM unnest(generos)))
